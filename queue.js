@@ -16,4 +16,8 @@ class Queue {
     };
     peek = () => this._elements[this._offset];
     size = () => this._elements.length;
+    isEmpty = () => this._elements.length === 0;
+    clear = () => {
+        this._elements = [];
+    };
 }
