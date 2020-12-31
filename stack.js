@@ -1,19 +1,14 @@
 class Stack {
-    elements = [];
-    constructor(elements = []) {
-        if (elements && !Array.isArray(elements)) elements = [elements];
-        this.elements = elements;
+    _elements = [];
+    constructor(init) {
+        if (init) this._elements = Array.isArray(init) ? init : [init];
     }
-    push = (el) => {
-        this.elements.push(el);
-    };
-    pop = () => {
-        return this.elements.pop();
-    };
-    peek = () => {
-        return this.elements[this.elements.length - 1];
-    };
-    isEmpty = () => {
-        return this.elements.length === 0;
+    push = (el) => this._elements.push(el);
+    pop = () => this._elements.pop();
+    peek = () => this._elements[this._elements.length - 1];
+    size = () => this._elements.length;
+    isEmpty = () => this._elements.length === 0;
+    clear = () => {
+        this._elements = [];
     };
 }
