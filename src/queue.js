@@ -21,3 +21,5 @@ class Queue {
         this._elements = [];
     };
 }
+
+module.exports = Queue;

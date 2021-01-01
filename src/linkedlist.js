@@ -14,27 +14,29 @@ class LinkedList {
         } else if (init) this.addToStart(init);
     }
     add = (el, pos = this._size) => {
-        if (pos > this._size || pos < 0) return;
+        if (pos > this._size || pos < 0)
+            throw new Error("Invalid add position");
 
-        el = el instanceof Node ? el : new Node(el);
+        let newNode = el instanceof Node ? el : new Node(el);
 
         if (!this._size) {
-            this._head = this._tail = el;
+            this._head = this._tail = newNode;
         } else if (pos === this._size) {
-            this._tail = this._tail.next = el;
+            this._tail = this._tail.next = newNode;
         } else if (pos === 0) {
-            el.next = this._head;
-            this._head = el;
+            newNode.next = this._head;
+            this._head = newNode;
         } else {
-            let trav = head,
+            let trav = this._head,
                 i = 0;
-            while (i++ < pos) trav = trav.next;
-            this._tail = trav.next = el;
+            while (++i < pos) trav = trav.next;
+            newNode.next = trav.next;
+            trav.next = newNode;
         }
         this._size++;
     };
-    addToEnd = (el) => this.add(el, this._size);
-    addToStart = (el) => this.add(el, 0);
+    addFirst = (el) => this.add(el, this._size);
+    addEnd = (el) => this.add(el, 0);
     removeAt = (index) => {
         if (
             !this._size ||
@@ -67,24 +69,25 @@ class LinkedList {
     removeEach(cb) {
         if (typeof cb !== "function" || !this._size) return;
 
-        let trav = this._head;
-        if (cb(trav.val)) this.removeFirst();
+        const initialSize = this._size;
 
+        while (this._size && cb(this._head.val)) this.removeFirst();
+        if (!this._size) return initialSize;
+
+        let trav = this._head;
         while (trav.next) {
-            if (cb(trav.next.val)) trav.next = trav.next.next;
-            trav = trav.next;
+            if (cb(trav.next.val)) {
+                trav.next = trav.next.next;
+                this._size--;
+            } else {
+                trav = trav.next;
+            }
         }
+
+        return initialSize - this._size;
     }
     size = () => this._size;
     isEmpty = () => this._size === 0;
 }
 
-const linkedList = new LinkedList();
-
-linkedList.add(5);
-linkedList.add(10);
-linkedList.add(15);
-linkedList.add(20);
-linkedList.add(25);
-linkedList.removeAt(2);
-linkedList.forEach(console.log);
+module.exports = LinkedList;

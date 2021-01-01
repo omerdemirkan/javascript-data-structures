@@ -12,3 +12,5 @@ class Stack {
         this._elements = [];
     };
 }
+
+module.exports = Stack;
