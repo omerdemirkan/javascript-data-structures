@@ -10,14 +10,14 @@ class LinkedList {
     constructor(init) {
         if (Array.isArray(init)) {
             this._size = init.length;
-            for (let i = 0; i < init.length; i++) this.add(elements[i]);
+            for (let i = 0; i < init.length; i++) this.add(init[i]);
         } else if (init) this.addToStart(init);
     }
     add = (el, pos = this._size) => {
         if (pos > this._size || pos < 0)
             throw new Error("Invalid add position");
 
-        let newNode = el instanceof Node ? el : new Node(el);
+        let newNode = new Node(el);
 
         if (!this._size) {
             this._head = this._tail = newNode;
@@ -35,39 +35,60 @@ class LinkedList {
         }
         this._size++;
     };
-    addFirst = (el) => this.add(el, this._size);
-    addEnd = (el) => this.add(el, 0);
     removeAt = (index) => {
-        if (
-            !this._size ||
-            typeof index !== "number" ||
-            index >= this._size ||
-            index < 0
-        )
-            return;
+        if (typeof index !== "number" || index >= this._size || index < 0)
+            throw new Error("Invalid index");
+
+        let removedVal;
+
         if (index === 0) {
+            removedVal = this._head.val;
             this._head = this._head.next;
         } else {
             let trav = this._head,
                 i = 0;
             while (++i < index) trav = trav.next;
+            removedVal = trav.next.val;
             trav.next = trav.next.next;
         }
-
         this._size--;
+        return removedVal;
     };
+    getAt = (index) => {
+        if (index < 0 || index >= this._size) throw new Error("Invalid index");
+        if (index === 0) return this._head.val;
+        if (index === this._size - 1) return this._tail.val;
+        let trav = this._head,
+            i = 0;
+        while (i++ < index) trav = trav.next;
+        return trav.val;
+    };
+
+    addFirst = (el) => this.add(el, this._size);
+    addEnd = (el) => this.add(el, 0);
     removeFirst = () => this.removeAt(0);
     removeLast = () => this.removeAt(this._size - 1);
+    getFirst = () => this.getAt(0);
+    getLast = () => this.getAt(this._size - 1);
+
     forEach = (cb) => {
-        if (typeof cb !== "function") return;
+        if (typeof cb !== "function") throw new Error("Invalid callback");
         let trav = this._head;
         while (trav) {
             cb(trav.val);
             trav = trav.next;
         }
     };
+    contains = (el) => {
+        let trav = this._head;
+        while (trav) {
+            if (trav.val === el || trav.val.equals(el)) return true;
+            trav = trav.next;
+        }
+        return false;
+    };
     removeEach(cb) {
-        if (typeof cb !== "function" || !this._size) return;
+        if (typeof cb !== "function") throw new Error("Invalid callback");
 
         const initialSize = this._size;
 
